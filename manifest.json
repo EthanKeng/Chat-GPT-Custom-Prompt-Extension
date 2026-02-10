@@ -22,7 +22,9 @@
           "https://gemini.google.com/app/*",
           "https://gemini.google.com/share/continue/*",
           "https://gemini.google.com/u/*",
-          "https://claude.ai/*"
+          "https://claude.ai/*",
+          "https://app.glean.com/chat*",
+          "https://notebooklm.google.com/notebook/*"
       ],
       "exclude_matches": [
         "https://chat.openai.com/auth/login",

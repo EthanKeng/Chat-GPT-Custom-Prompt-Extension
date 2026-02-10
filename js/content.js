@@ -1,9 +1,14 @@
-const supportGemini = !window.location.href.includes("chatgpt.com");
-const supportClaude = window.location.href.includes("claude.ai");
+const hostname = window.location.hostname;
 
-const supportChatGPT = !supportGemini && !supportClaude;
+const supportChatGPT = hostname === "chatgpt.com" || hostname === "chat.openai.com";
+const supportClaude = hostname === "claude.ai";
+const supportGemini = hostname === "gemini.google.com";
+const supportGlean = hostname === "app.glean.com";
+const supportNotebookLM = hostname === "notebooklm.google.com";
 
-if (supportGemini) {
+const supportGeminiUI = supportGemini || supportGlean || supportNotebookLM;
+
+if (supportGeminiUI) {
   document.body.classList.add('supportGemini');
 }
 
@@ -1224,7 +1229,7 @@ function findGroupAndIndex(promptId) {
   // css style
   const styles = `
       .custom-menu {
-        ${ supportGemini ? 'z-index: 1;':'z-index: 0;' }
+        ${ supportGeminiUI ? 'z-index: 1;':'z-index: 0;' }
         position: fixed;
         top:65px;
         right:0;
@@ -1241,8 +1246,8 @@ function findGroupAndIndex(promptId) {
         display:flex;
         flex-direction:column !important;
 
-        ${ supportGemini ? '':'transition: transform 0.3s ease-in-out;' }
-        ${ supportGemini ? '':'transform: translateX(0);' }
+        ${ supportGeminiUI ? '':'transition: transform 0.3s ease-in-out;' }
+        ${ supportGeminiUI ? '':'transform: translateX(0);' }
       }
       @media only screen and (max-width: 980px) {
         .custom-menu {
@@ -1314,7 +1319,7 @@ function findGroupAndIndex(promptId) {
         font-size: 16px;
         color: black;
         outline: none;
-        ${ supportGemini ? 'width:135px' : 'width:100%' }
+        ${ supportGeminiUI ? 'width:135px' : 'width:100%' }
       }
       .dark .custom-menu .search-box .custom-keyword-input {
         background-color: black;
@@ -1851,7 +1856,7 @@ function findGroupAndIndex(promptId) {
                 "placeholder_prompt_textarea"
               )}"></textarea>
               <div class="footer center">
-                  <button ${supportGemini ? 'hidden' : ''} id="dialog-edit" class="info" tabindex="2">${i18n(
+                  <button ${supportGeminiUI ? 'hidden' : ''} id="dialog-edit" class="info" tabindex="2">${i18n(
                     "button_edit"
                   )}</button>
                   <button id="dialog-ok" class="primary" tabindex="3">${i18n(
@@ -2799,7 +2804,7 @@ function findGroupAndIndex(promptId) {
         </div>
       </div>
       <div class="footer" class="center">
-        <button ${supportGemini ? 'hidden' : ''} tabindex="97" id="dialog7-edit" class="info">${i18n(
+        <button ${supportGeminiUI ? 'hidden' : ''} tabindex="97" id="dialog7-edit" class="info">${i18n(
           "button_edit"
         )}</button>
         <button tabindex="98" id="dialog7-ok" class="primary">${i18n(
@@ -2883,7 +2888,7 @@ function findGroupAndIndex(promptId) {
       collapseToggle();
     });
 
-    if(supportGemini){
+    if(supportGeminiUI){
       chrome.storage.local.get(['Custom.EnableGeminiSupport'], res=>{
 
         const enableGeminiSupport = res['Custom.EnableGeminiSupport'];
@@ -3342,7 +3347,7 @@ function findGroupAndIndex(promptId) {
       mutationTimer = setTimeout(function () {
 
         if (
-          !supportGemini &&
+          !supportGeminiUI &&
           document.querySelector("nav.flex") &&
           document.querySelector("nav.flex")?.childNodes?.length >= 2 &&
           !document.getElementById("switchMenu")
@@ -3489,7 +3494,7 @@ function findGroupAndIndex(promptId) {
     superPromptSettingsDialog.style.display = "none";
     superPromptDialog.style.display = "none";
 
-    if(supportGemini){
+    if(supportGeminiUI){
       checkGeminiTheme();
       if(supportClaude){
         checkClaudeTheme();
@@ -3846,7 +3851,7 @@ function findGroupAndIndex(promptId) {
   function chatInput() {
     let chatInput = document.querySelector("#prompt-textarea");
     if(
-      supportGemini &&
+      supportGeminiUI &&
       !supportClaude
     ){
       chatInput = document.body.querySelector('rich-textarea');
@@ -3861,7 +3866,7 @@ function findGroupAndIndex(promptId) {
     let sendButton = document.querySelector('button[data-testid="send-button"]') ||
     document.querySelector("#prompt-textarea")?.parentElement?.parentElement?.querySelectorAll('button')[document.querySelector("#prompt-textarea")?.parentElement?.parentElement?.querySelectorAll('button')?.length-1] 
     if(
-      supportGemini &&
+      supportGeminiUI &&
       !supportClaude
     ){
       sendButton = document.querySelector('.send-button-container')?.querySelector('button');
@@ -3897,7 +3902,7 @@ function findGroupAndIndex(promptId) {
         paragraph.textContent = msg;
         chatInput().appendChild(paragraph);
       })
-    }else if(supportGemini){
+    }else if(supportGeminiUI){
       chatInput().children[0].textContent = message;
       chatInput().children[0].focus();
     }else{
@@ -3939,7 +3944,7 @@ function findGroupAndIndex(promptId) {
   }
 
   questionDialogEditBtn.addEventListener("click", () => {
-    if(supportGemini){return}
+    if(supportGeminiUI){return}
     questionDialog.style.display = "none";
     showSettingsDialog(questionId - 1);
   });
@@ -4756,7 +4761,7 @@ function findGroupAndIndex(promptId) {
   });
 
   editSuperPromptBtn.addEventListener("click", () => {
-    if(supportGemini){return}
+    if(supportGeminiUI){return}
     superPromptDialog.style.display = "none";
     const { group, order } = findGroupAndIndex(superPromptId);
     showSuperPromptSettingDialog(group, order - 1);
@@ -5615,7 +5620,7 @@ function findGroupAndIndex(promptId) {
       }
     });
 
-    if(supportGemini){
+    if(supportGeminiUI){
       menuDiv.style.visibility = "hidden";
     }
 
